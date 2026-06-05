@@ -121,7 +121,7 @@ input, select { font: inherit; }
 .logout-btn { color: var(--muted); font-size: 18px; margin-left: 4px; }
 
 /* ── Hauptinhalt ───────────────────────────────────────────── */
-.main-content { flex: 1; overflow-y: auto; padding: 14px 14px calc(var(--nav-h) + 90px); }
+.main-content { flex: 1; overflow-y: auto; padding: 14px 14px calc(var(--nav-h) + 90px + env(safe-area-inset-bottom)); }
 .muted { color: var(--muted); font-size: 14px; }
 
 /* ── Übersicht: Donut-Karte ────────────────────────────────── */
@@ -206,7 +206,7 @@ input, select { font: inherit; }
 
 /* ── FAB ───────────────────────────────────────────────────── */
 .fab {
-  position: fixed; bottom: calc(var(--nav-h) + 18px); right: 20px;
+  position: fixed; bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom)); right: 20px;
   width: 60px; height: 60px; border-radius: 50%;
   background: var(--primary); color: #0b0b0d; font-size: 30px; line-height: 1;
   box-shadow: 0 8px 24px rgba(129,140,248,.45);
@@ -224,7 +224,8 @@ input, select { font: inherit; }
 
 /* ── Bottom-Navigation ─────────────────────────────────────── */
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h);
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
   background: var(--bg-elev); border-top: 1px solid var(--border);
   display: flex; z-index: 20; padding-bottom: env(safe-area-inset-bottom);
 }
