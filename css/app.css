@@ -148,10 +148,20 @@ input, select { font: inherit; }
 
 /* ── Übersicht: Saldo-Trend ────────────────────────────────── */
 .trend-card { padding: 16px 16px 12px; margin-bottom: 18px; }
-.trend-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.trend-head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; text-align: left;
+}
 .trend-title { font-size: 14px; font-weight: 700; }
+.trend-right { display: flex; align-items: center; gap: 8px; }
 .trend-sub { font-size: 12px; color: var(--muted); }
+.trend-chevron { color: var(--muted); font-size: 13px; transition: transform .2s; }
 .trend-wrap { position: relative; height: 150px; }
+
+.trend-card.collapsed { padding-bottom: 16px; }
+.trend-card.collapsed .trend-head { margin-bottom: 0; }
+.trend-card.collapsed .trend-wrap { display: none; }
+.trend-card.collapsed .trend-chevron { transform: rotate(-90deg); }
 
 /* ── Übersicht: Kategorie-Aufschlüsselung ──────────────────── */
 .bd-section { margin-bottom: 18px; }

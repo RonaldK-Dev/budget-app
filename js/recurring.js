@@ -113,8 +113,8 @@ const Recurring = {
         </div>
         <div class="form-group">
           <label>Betrag (€)</label>
-          <input type="number" id="rf-betrag" step="0.01" min="0.01" inputmode="decimal"
-            value="${isEdit ? rec.betrag : ''}" placeholder="0,00" required>
+          <input type="text" id="rf-betrag" inputmode="decimal"
+            value="${isEdit ? amountToInput(rec.betrag) : ''}" placeholder="0,00" required>
         </div>
         <div class="form-group">
           <label>Kategorie</label>
@@ -151,9 +151,11 @@ const Recurring = {
 
     document.getElementById('rec-form').addEventListener('submit', async e => {
       e.preventDefault();
+      const betrag = parseAmount(document.getElementById('rf-betrag').value);
+      if (!(betrag > 0)) { alert('Bitte einen gültigen Betrag eingeben (z. B. 12,50).'); return; }
       const payload = {
         name:        document.getElementById('rf-name').value.trim(),
-        betrag:      parseFloat(document.getElementById('rf-betrag').value),
+        betrag,
         typ,
         category_id: document.getElementById('rf-category').value || null,
         tag_im_monat: parseInt(document.getElementById('rf-tag').value, 10)

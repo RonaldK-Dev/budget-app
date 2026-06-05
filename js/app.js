@@ -9,6 +9,19 @@ function monthLabel(y, m) {
   return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
 }
 function today() { return new Date().toISOString().slice(0, 10); }
+
+// Betrag aus Nutzereingabe robust parsen: akzeptiert Komma UND Punkt,
+// behandelt "1.234,56" (DE) und "1234.56" korrekt.
+function parseAmount(str) {
+  let s = String(str ?? '').trim().replace(/[^\d.,-]/g, '');
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+// Für die Anzeige im Eingabefeld: Punkt -> Komma (deutsch)
+function amountToInput(n) {
+  return (n === null || n === undefined || n === '') ? '' : String(n).replace('.', ',');
+}
 function esc(s) {
   return String(s).replace(/[&<>"']/g, m =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -211,12 +224,16 @@ const Views = {
         ${gs.map(g => this._bdGroup(g, total)).join('')}
       </div>` : '';
 
+    const trendCollapsed = localStorage.getItem('trend_collapsed') === '1';
     const trendCard = `
-      <div class="ov-card trend-card">
-        <div class="trend-head">
+      <div class="ov-card trend-card ${trendCollapsed ? 'collapsed' : ''}">
+        <button type="button" class="trend-head">
           <span class="trend-title">Saldo-Verlauf</span>
-          <span class="trend-sub">letzte 6 Monate</span>
-        </div>
+          <span class="trend-right">
+            <span class="trend-sub">letzte 6 Monate</span>
+            <span class="trend-chevron">▾</span>
+          </span>
+        </button>
         <div class="trend-wrap"><canvas id="trend"></canvas></div>
       </div>`;
 
@@ -255,6 +272,15 @@ const Views = {
   },
 
   bindOverview() {
+    const trendHead = document.querySelector('.trend-head');
+    trendHead?.addEventListener('click', () => {
+      const card = trendHead.closest('.trend-card');
+      const collapsed = card.classList.toggle('collapsed');
+      localStorage.setItem('trend_collapsed', collapsed ? '1' : '0');
+      if (collapsed) { App._trend?.destroy(); App._trend = null; }
+      else this.renderTrend();
+    });
+
     document.querySelectorAll('.bd-head').forEach(head => {
       head.addEventListener('click', () => {
         const grp = head.closest('.bd-group');
@@ -301,6 +327,7 @@ const Views = {
   async renderTrend() {
     const ctx = document.getElementById('trend');
     if (!ctx || typeof Chart === 'undefined') return;
+    if (ctx.closest('.trend-card')?.classList.contains('collapsed')) return;
     App._trend?.destroy();
 
     // Die letzten 6 Monate bis zum aktuell gewählten Monat
@@ -400,8 +427,8 @@ const Modal = {
           <button type="button" class="type-btn ${defTyp === 'einnahme' ? 'active' : ''}" data-typ="einnahme">Einnahme</button>
         </div>
         <div class="form-group amount-group">
-          <input type="number" id="f-betrag" step="0.01" min="0.01" inputmode="decimal"
-            value="${tx ? tx.betrag : ''}" placeholder="0,00 €" required autofocus>
+          <input type="text" id="f-betrag" inputmode="decimal"
+            value="${tx ? amountToInput(tx.betrag) : ''}" placeholder="0,00 €" required autofocus>
         </div>
         <div class="form-group">
           <label>Kategorie</label>
@@ -459,8 +486,10 @@ const Modal = {
 
     document.getElementById('tx-form').addEventListener('submit', async e => {
       e.preventDefault();
+      const betrag = parseAmount(document.getElementById('f-betrag').value);
+      if (!(betrag > 0)) { alert('Bitte einen gültigen Betrag eingeben (z. B. 12,50).'); return; }
       const payload = {
-        betrag:      parseFloat(document.getElementById('f-betrag').value),
+        betrag,
         typ:         currentTyp,
         category_id: this._selCat || null,
         datum:       document.getElementById('f-datum').value,
