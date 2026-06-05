@@ -1,0 +1,10 @@
+# Lokale Tooling-/Editor-Konfiguration
+.claude/
+
+# OS-Cruft
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Logs
+*.log

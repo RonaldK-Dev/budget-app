@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Haushalt</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- ── Auth-Screen ─────────────────────────────────────── -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-wrap">
+      <div class="auth-logo">💰</div>
+      <h1 class="auth-title">Haushalt</h1>
+      <p class="auth-sub">Deine persönliche Finanzkontrolle</p>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="login">Anmelden</button>
+        <button class="tab-btn" data-tab="register">Registrieren</button>
+      </div>
+
+      <form id="auth-form">
+        <div class="form-group">
+          <label>E-Mail</label>
+          <input type="email" id="auth-email" placeholder="name@beispiel.de"
+            autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label>Passwort</label>
+          <input type="password" id="auth-pw" placeholder="••••••••"
+            autocomplete="current-password" minlength="6" required>
+        </div>
+        <p id="auth-error" class="error-msg"></p>
+        <button type="submit" id="auth-submit" class="btn-primary btn-full">Anmelden</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── App-Screen ──────────────────────────────────────── -->
+  <div id="screen-app" class="screen">
+
+    <!-- Offline-Banner -->
+    <div id="offline-bar" class="offline-bar hidden">
+      📵 Offline – Buchungen werden lokal gespeichert
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <button id="btn-prev-month" class="icon-btn large">‹</button>
+      <span id="month-label" class="month-label">Juni 2026</span>
+      <button id="btn-next-month" class="icon-btn large">›</button>
+      <button id="btn-logout" class="icon-btn logout-btn" title="Abmelden">⏻</button>
+    </header>
+
+    <!-- Hauptinhalt -->
+    <main id="main-content" class="main-content"></main>
+
+    <!-- FAB -->
+    <button id="fab" class="fab" aria-label="Buchung hinzufügen">
+      +<span id="sync-badge" class="sync-badge"></span>
+    </button>
+
+    <!-- Bottom-Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-view="overview">
+        <span class="nav-icon">📊</span>
+        <span>Übersicht</span>
+      </button>
+      <button class="nav-btn" data-view="recurring">
+        <span class="nav-icon">🔄</span>
+        <span>Wiederkehrend</span>
+      </button>
+      <button class="nav-btn" data-view="compare">
+        <span class="nav-icon">📈</span>
+        <span>Vergleich</span>
+      </button>
+      <button class="nav-btn" data-view="categories">
+        <span class="nav-icon">🏷️</span>
+        <span>Kategorien</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ── Modal ───────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/offline.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/recurring.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
